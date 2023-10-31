@@ -4,94 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mode Calculator for Grouped Data</title>
+    <title>Grouped Mode Calculator</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
         }
 
         .container {
             text-align: center;
-            max-width: 400px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
         }
 
-        input, button {
-            margin-top: 10px;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
+        input[type="text"] {
+            padding: 8px;
+            margin: 8px;
+            width: 200px;
         }
 
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Mode Calculator for Grouped Data</h1>
-        <label for="intervals">Enter intervals and frequencies (comma separated):</label>
-        <input type="text" id="intervals" placeholder="e.g., 10-20: 5, 20-30: 8, 30-40: 12">
+        <h2>Grouped Mode Calculator</h2>
+        <div id="interval-container">
+            <label>Intervals:</label>
+            <input type="text" id="intervalsInput">
+        </div>
+        <div id="frequency-container">
+            <label>Frequencies:</label>
+            <input type="text" id="frequenciesInput">
+        </div>
         <button onclick="calculateMode()">Calculate Mode</button>
         <div id="result"></div>
-        <div id="formula">
-            <h2>Formula:</h2>
-            <p>Mode = L + [(f1 - f0) / (2f1 - f0 - f2)] * h</p>
-            <p>Where:</p>
-            <ul>
-                <li>L = Lower boundary of the modal class</li>
-                <li>f1 = Frequency of the modal class</li>
-                <li>f0 = Frequency of the class before the modal class</li>
-                <li>f2 = Frequency of the class after the modal class</li>
-                <li>h = Width of each interval</li>
-            </ul>
-        </div>
     </div>
 
     <script>
         function calculateMode() {
-            const inputElement = document.getElementById("intervals");
-            const data = inputElement.value.split(",").map(item => item.trim().split(":").map(part => part.trim()));
-            
-            let modalClass;
-            let modalClassLowerBoundary;
-            let f1;
-            let f0;
-            let f2;
-            let h;
+            var intervals = document.getElementById("intervalsInput").value.split(",").map(Number);
+            var frequencies = document.getElementById("frequenciesInput").value.split(",").map(Number);
 
-            data.forEach(item => {
-                const [interval, frequency] = item[0].split("-");
-                const lowerBound = parseInt(interval.trim());
-                const upperBound = parseInt(frequency.trim());
-
-                if (!modalClass || parseInt(frequency) > f1) {
-                    modalClass = interval;
-                    modalClassLowerBoundary = lowerBound;
-                    f1 = parseInt(frequency);
-                    f0 = data[data.indexOf(item) - 1] ? parseInt(data[data.indexOf(item) - 1][1]) : 0;
-                    f2 = data[data.indexOf(item) + 1] ? parseInt(data[data.indexOf(item) + 1][1]) : 0;
-                    h = upperBound - lowerBound;
+            var maxFrequency = Math.max(...frequencies);
+            var modeIndices = [];
+            for (var i = 0; i < frequencies.length; i++) {
+                if (frequencies[i] === maxFrequency) {
+                    modeIndices.push(i);
                 }
-            });
+            }
 
-            const mode = modalClassLowerBoundary + ((f1 - f0) / (2 * f1 - f0 - f2)) * h;
+            var modes = modeIndices.map(index => intervals[index]);
 
-            const resultElement = document.getElementById("result");
-            resultElement.textContent = `Mode: ${mode.toFixed(2)}`;
+            var resultContainer = document.getElementById("result");
+            resultContainer.innerHTML = "Mode(s): " + modes.join(", ");
         }
     </script>
 </body>
