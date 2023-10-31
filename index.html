@@ -8,30 +8,53 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f7f7f7;
+            text-align: center;
         }
 
         .container {
-            text-align: center;
-            margin: 20px;
+            background-color: #ffffff;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         }
 
-        input[type="text"] {
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
             padding: 8px;
-            margin: 8px;
-            width: 200px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
         }
 
         button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #4caf50;
             color: white;
+            padding: 10px 20px;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -39,37 +62,41 @@
 <body>
     <div class="container">
         <h2>Grouped Mode Calculator</h2>
-        <div id="interval-container">
-            <label>Intervals:</label>
-            <input type="text" id="intervalsInput">
+        <div class="input-group">
+            <label>Modal Class (e.g., 60-65):</label>
+            <input type="text" id="modalClassInput">
         </div>
-        <div id="frequency-container">
-            <label>Frequencies:</label>
-            <input type="text" id="frequenciesInput">
+        <div class="input-group">
+            <label>Frequency (f1):</label>
+            <input type="number" id="frequencyInput">
+        </div>
+        <div class="input-group">
+            <label>Frequency of Class Before Modal Class (f0):</label>
+            <input type="number" id="frequencyBeforeInput">
+        </div>
+        <div class="input-group">
+            <label>Frequency of Class After Modal Class (f2):</label>
+            <input type="number" id="frequencyAfterInput">
         </div>
         <button onclick="calculateMode()">Calculate Mode</button>
-        <div id="result"></div>
-    </div>
+        <div class="result" id="result"></div>
 
-    <script>
-        function calculateMode() {
-            var intervals = document.getElementById("intervalsInput").value.split(",").map(Number);
-            var frequencies = document.getElementById("frequenciesInput").value.split(",").map(Number);
+        <script>
+            function calculateMode() {
+                var modalClass = document.getElementById("modalClassInput").value;
+                var frequency = parseInt(document.getElementById("frequencyInput").value);
+                var frequencyBefore = parseInt(document.getElementById("frequencyBeforeInput").value);
+                var frequencyAfter = parseInt(document.getElementById("frequencyAfterInput").value);
 
-            var maxFrequency = Math.max(...frequencies);
-            var modeIndices = [];
-            for (var i = 0; i < frequencies.length; i++) {
-                if (frequencies[i] === maxFrequency) {
-                    modeIndices.push(i);
-                }
+                var lowerBoundary = parseInt(modalClass.split("-")[0]);
+                var classWidth = parseInt(modalClass.split("-")[1]) - lowerBoundary;
+                var mode = lowerBoundary + ((frequency - frequencyBefore) / ((2 * frequency) - frequencyBefore - frequencyAfter)) * classWidth;
+
+                var resultContainer = document.getElementById("result");
+                resultContainer.innerHTML = "Mode: " + Math.round(mode);
             }
-
-            var modes = modeIndices.map(index => intervals[index]);
-
-            var resultContainer = document.getElementById("result");
-            resultContainer.innerHTML = "Mode(s): " + modes.join(", ");
-        }
-    </script>
+        </script>
+    </div>
 </body>
 
 </html>
